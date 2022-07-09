@@ -14,25 +14,41 @@ int main(int argc, char *argv[])
 #else 
 	
     QProcess ls;
-    ls.start("/usr/bin/ls", QStringList() << "/");
-    //ls.start("/usr/bin/sh", QStringList() << "-c" << "/usr/bin/ls /");
-
     QObject::connect(&ls, &QProcess::stateChanged, [=](QProcess::ProcessState state) 
     { 
-        qInfo() << "state:" << state << Qt::endl; 
+        qInfo() << "stateChanged:" << state << Qt::endl; 
     });
     
     QObject::connect(&ls, &QProcess::errorOccurred, [=](QProcess::ProcessError error) 
     { 
-    	qInfo() << "error:" << error << Qt::endl; 
+    	qInfo() << "errorOccurred:" << error << Qt::endl; 
     });
 
-    ls.waitForFinished();
-    qInfo() << "ls.readAllStandardOutput:"<<ls.readAllStandardOutput() ;
-    qInfo() << "ls.readAllStandardError:"<<ls.readAllStandardError();
-    
+    QObject::connect(&ls, &QProcess::started, [=]() 
+    { 
+    	qInfo() << "Process started" << Qt::endl; 
+    });
+
+    QObject::connect(&ls, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+    [=](int exitCode, QProcess::ExitStatus exitStatus){
+    	qInfo() << "Process finished: code: " << exitCode << "status: "<< exitStatus << Qt::endl; 
+    });
+
+    QObject::connect(&ls, &QProcess::readyReadStandardError, [&]() 
+    { 
+    	qInfo() << "stderr:" << ls.readAllStandardError() << Qt::endl; 
+    });
+
+    QObject::connect(&ls, &QProcess::readyReadStandardOutput, [&]() 
+    { 
+    	qInfo() << "stdout:" << ls.readAllStandardOutput() << Qt::endl; 
+    });
+
+    // ls.start("/usr/bin/ls", QStringList() << "/");
+    // ls.start("/usr/bin/sleep", QStringList() << "10");
+    ls.start("/usr/bin/sh", QStringList() << "-c" << "/usr/bin/ls / > /tmp/output 2>&1");
+
 #endif 
-    sleep(10);
     
     return app.exec();
     
