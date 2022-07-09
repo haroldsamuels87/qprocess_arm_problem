@@ -2,9 +2,12 @@
 #include <QDebug>
 #include <QProcess>
 #include <unistd.h>
+#include <QCoreApplication>
 
 int main(int argc, char *argv[])
 {
+    QCoreApplication app(argc, argv);
+
     qInfo("Hi This is qprocess simultation\n");
 #if 0
     QProcess::execute("/usr/bin/ls /");
@@ -31,6 +34,6 @@ int main(int argc, char *argv[])
 #endif 
     sleep(10);
     
-    return 0;
+    return app.exec();
     
 }
