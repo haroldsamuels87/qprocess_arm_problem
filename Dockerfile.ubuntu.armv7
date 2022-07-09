@@ -1,0 +1,6 @@
+FROM --platform=linux/arm/v7 ubuntu:jammy
+
+RUN apt-get update 
+
+RUN export DEBIAN_FRONTEND=noninteractiv && \
+ apt -y install build-essential cmake qtbase5-dev 
