@@ -17,4 +17,10 @@ add_compile_options("-g")
 add_executable(qt_process_arm
   main.cpp
 )
+add_executable(simple_fork
+  fork.cpp
+)
+add_executable(simple_exec
+  exec.cpp
+)
 target_link_libraries(qt_process_arm Qt${QT_VERSION_MAJOR}::Core)
